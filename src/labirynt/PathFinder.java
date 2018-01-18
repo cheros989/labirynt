@@ -6,6 +6,22 @@ public class PathFinder {
 	
 	public static ArrayList<Coordinate> bestPath = new ArrayList<>();
 	public static ArrayList<Coordinate> pathes = new ArrayList<>();
+	private int priority_x = 1;
+	private int priority_y = 1;
+	
+	public void setPriorities(Coordinate start_point, Coordinate end_point) {
+		if (start_point.getX() > end_point.getX()) {
+			priority_x = -1;
+		} else {
+			priority_x = 1;
+		}
+		
+		if (start_point.getY() > end_point.getY()) {
+			priority_y = 1;
+		} else {
+			priority_y = -1;
+		}
+	}
 	
 	public void findPathes(int[][] labirynt, Coordinate start_point, Coordinate end_point) {
 		
@@ -15,7 +31,7 @@ public class PathFinder {
 			return;
 		}
 		labirynt[start_point.getY()][start_point.getX()] = 7;
-		for (Coordinate coordinate : start_point.getVariants(labirynt)) {
+		for (Coordinate coordinate : start_point.getVariants(labirynt, priority_x, priority_y)) {
 			findPathes(labirynt, coordinate, end_point);
 		}
 	}
@@ -28,6 +44,7 @@ public class PathFinder {
 		}
 		findPathSize(pathes.get(0));
 		bestPath.addAll(PathFinder.bestPath);
+		System.out.println(bestPath.size());
 		for (Coordinate path : pathes) {
 			findPathSize(path);
 			if (bestPath.size() > PathFinder.bestPath.size()) {
@@ -75,7 +92,7 @@ public class PathFinder {
 			}
 			string += "\r\n";
 		}
-		System.out.println(string);
+		System.out.print(string);
 	}
 	
 }

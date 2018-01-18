@@ -34,12 +34,29 @@ public class Coordinate {
 	public Coordinate getPrevCoordinate() {
 		return prevCoordinate;
 	};
-	public ArrayList<Coordinate> getVariants(int[][] labirynt) {
+	public ArrayList<Coordinate> getVariants(int[][] labirynt, int priority_x, int priority_y) {
 		ArrayList<Coordinate> variants = new ArrayList<>();
-		addUp(variants, labirynt);
-		addRight(variants, labirynt);
-		addLeft(variants, labirynt);
-		addDown(variants, labirynt);
+		if (priority_x == 1) {
+			addRight(variants, labirynt);
+			addLeft(variants, labirynt);
+			if (priority_y == 1) {
+				addUp(variants, labirynt);
+				addDown(variants, labirynt);
+			} else {
+				addDown(variants, labirynt);
+				addUp(variants, labirynt);
+			}
+		} else {
+			addLeft(variants, labirynt);
+			addRight(variants, labirynt);
+			if (priority_y == 1) {
+				addUp(variants, labirynt);
+				addDown(variants, labirynt);
+			} else { 
+				addDown(variants, labirynt);
+				addUp(variants, labirynt);
+			}
+		}
 		return variants;
 	}
 	
