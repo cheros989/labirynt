@@ -19,6 +19,10 @@ public class PathFinder {
 			labirynt[coordinate.getY()][coordinate.getX()] = 7;
 			new_vars.addAll(coordinate.getVariants(labirynt));
 		}
+		if (new_vars.isEmpty()) {
+			System.out.println("no way");
+			return;
+		}
 		findPathes(labirynt, new_vars, end_point);
 	}
 	
