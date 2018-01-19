@@ -1,88 +1,50 @@
 package labirynt;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PathFinder {
 	
-	public static ArrayList<Coordinate> bestPath = new ArrayList<>();
-	public static ArrayList<Coordinate> pathes = new ArrayList<>();
-	private int priority_x = 1;
-	private int priority_y = 1;
+	public static Coordinate bestPath = null;
 	
-	public void setPriorities(Coordinate start_point, Coordinate end_point) {
-		if (start_point.getX() > end_point.getX()) {
-			priority_x = -1;
-		} else {
-			priority_x = 1;
-		}
+	public void findPathes(int[][] labirynt, ArrayList<Coordinate> variants, Coordinate end_point) {
 		
-		if (start_point.getY() > end_point.getY()) {
-			priority_y = 1;
-		} else {
-			priority_y = -1;
+		ArrayList<Coordinate> new_vars = new ArrayList<>();
+		for (Coordinate coordinate : variants) {
+			if (coordinate.equ(end_point)) {
+				System.out.println("BEST PATH WAS FINDED:");
+				findPathTo(coordinate, labirynt);
+				return;
+			}
+			labirynt[coordinate.getY()][coordinate.getX()] = 7;
+			new_vars.addAll(coordinate.getVariants(labirynt));
 		}
+		findPathes(labirynt, new_vars, end_point);
 	}
 	
-	public void findPathes(int[][] labirynt, Coordinate start_point, Coordinate end_point) {
-		
-		if (start_point.equ(end_point)) {
-			System.out.println("Path has been finded");
-			pathes.add(start_point);
+	public void findPathTo (Coordinate coordinate, int[][] labirynt) {
+		labirynt[coordinate.getY()][coordinate.getX()] = 5;
+		if (coordinate.getPrevCoordinate() == null) {
 			return;
 		}
-		labirynt[start_point.getY()][start_point.getX()] = 7;
-		for (Coordinate coordinate : start_point.getVariants(labirynt, priority_x, priority_y)) {
-			findPathes(labirynt, coordinate, end_point);
-		}
+		findPathTo(coordinate.getPrevCoordinate(), labirynt);
 	}
 	
-	public ArrayList<Coordinate> findBestPath () {
-		ArrayList<Coordinate> bestPath = new ArrayList<>();
-		if (pathes.isEmpty()) {
-			System.err.println("has not pathes");
-			return null;
-		}
-		findPathSize(pathes.get(0));
-		bestPath.addAll(PathFinder.bestPath);
-		System.out.println(bestPath.size());
-		for (Coordinate path : pathes) {
-			findPathSize(path);
-			if (bestPath.size() > PathFinder.bestPath.size()) {
-				bestPath.clear();
-				bestPath.addAll(PathFinder.bestPath);
-			}
-		}
-		return bestPath;
-	}
-	
-	public Coordinate getStartPoint(int[][] labirynt) {
+	public HashMap<String, Coordinate> getStartEndPoints(int[][] labirynt) {
+		HashMap<String, Coordinate> coords = new HashMap<>();
 		for (int i = 0; i < labirynt.length; i++) {
 			for (int j = 0; j < labirynt[i].length; j++) {
 				if (labirynt[i][j] == 1) {
-					return new Coordinate(j, i);
+					coords.put("start", new Coordinate(j, i));
 				}
-			}
-		}
-		return null;
-	}
-	
-	public Coordinate getEndPoint(int[][] labirynt) {
-		for (int i = 0; i < labirynt.length; i++) {
-			for (int j = 0; j < labirynt[i].length; j++) {
 				if (labirynt[i][j] == 2) {
-					return new Coordinate(j, i);
+					coords.put("end", new Coordinate(j, i));
 				}
 			}
 		}
-		return null;
+		return coords;
 	}
 	
-	private void findPathSize(Coordinate end_point) {
-		if (end_point.getPrevCoordinate() != null) {
-			PathFinder.bestPath.add(end_point);
-			findPathSize(end_point.getPrevCoordinate());
-		}
-	}
 	
 	public void printLab(int[][] labirynt) {
 		String string = "";
